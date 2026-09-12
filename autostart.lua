@@ -9,7 +9,7 @@
 
 hl.on("hyprland.start", function()
     hl.exec_cmd("elephant")            -- backend de walker, doit tourner en permanence
-    hl.exec_cmd("quickshell")          -- barre
+    hl.exec_cmd("noctalia")            -- barre
 
     -- Decommente au fur et a mesure que tu installes ces outils :
     -- hl.exec_cmd("hyprpaper")        -- fond d'ecran
