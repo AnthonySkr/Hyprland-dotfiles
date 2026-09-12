@@ -16,7 +16,7 @@ local nvidia_optional = {
 }
 
 local exec_once = {
-    "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 || /usr/libexec/polkit-gnome-authentication-agent-1",
+    "/usr/libexec/kf6/polkit-kde-authentication-agent-1",
     "gnome-keyring-daemon --start --components=secrets",
     "systemctl --user start --ignore-dependencies xdg-desktop-portal-hyprland.service xdg-desktop-portal.service",
     "noctalia",

@@ -1,4 +1,3 @@
-local scrPath = (os.getenv("HOME") or "") .. "/.config/hypr/Scripts"
 local mainMod = "SUPER"
 local TERMINAL = "kitty"
 local EDITOR = "code"
@@ -16,7 +15,6 @@ local KEY = {
 	CHEATSHEET_TOGGLE = ("%s + H"):format(mainMod),
 	CHEATSHEET_REFRESH = ("%s + SHIFT + H"):format(mainMod),
 	HYPR_KEYS_PANEL = ("%s + K"):format(mainMod),
-	STEAM = ("%s + S"):format(mainMod),
 	MUSIC = ("%s + M"):format(mainMod),
 	VIDEO = ("%s + V"):format(mainMod),
 
@@ -68,7 +66,6 @@ hl.bind(KEY.BROWSER, hl.dsp.exec_cmd(BROWSER), { description = "Browser" })
 hl.bind(KEY.LAUNCHER, hl.dsp.exec_cmd("noctalia msg panel-toggle launcher"), { description = "Toggle launcher" })
 hl.bind(KEY.LOCK, hl.dsp.exec_cmd( "noctalia msg session lock "), { description =  "Lock screen " })
 hl.bind(KEY.SETTINGS, hl.dsp.exec_cmd("noctalia msg settings-toggle"), { description = "Toggle settings" })
-hl.bind(KEY.STEAM, hl.dsp.exec_cmd("steam"), { description = "Steam" })
 hl.bind(KEY.MUSIC, hl.dsp.exec_cmd("quodlibet"), { description = "Music player" })
 hl.bind(KEY.VIDEO, hl.dsp.exec_cmd("mpv --player-operation-mode=pseudo-gui --force-window=immediate"), { description = "Video player" })
 
@@ -78,7 +75,7 @@ hl.bind(KEY.FLOAT, hl.dsp.window.float({ action = "toggle" }), { description = "
 hl.bind(KEY.FULLSCREEN, hl.dsp.window.fullscreen(), { description = "Toggle fullscreen" })
 
 -- 3. Window Navigation & Layout
-hl.bind(KEY.WORKSPACE_NEXT_MONITOR, hl.dsp.exec_cmd(scrPath .. "/workspace.sh"), { description = "Next workspace on monitor" })
+hl.bind(KEY.WORKSPACE_NEXT_MONITOR, hl.dsp.focus({ workspace = "m+1" }), { description = "Next workspace on monitor" })
 hl.bind(KEY.WORKSPACE_PREV_MONITOR, hl.dsp.focus({ workspace = "m-1" }), { description = "Previous workspace on monitor" })
 
 hl.bind(KEY.FOCUS_LEFT, hl.dsp.focus({ direction = "left" }), { description = "Focus left" })
@@ -105,14 +102,29 @@ hl.bind("SHIFT + PRINT",       hl.dsp.exec_cmd("HYPRSHOT_DIR=~/Pictures/Screensh
 hl.bind(KEY.SHOT_ANNOTATE, hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | satty --filename - --output-filename ~/Pictures/Screenshots/Screenshot-$(date '+%Y%m%d-%H:%M:%S').png"), { description = "Annotate screenshot" })
 
 -- 5. Workspace Switching
-for i = 1, 9 do
-	local focusKey = ("%s + %d"):format(mainMod, i)
-	local moveKey = ("%s + SHIFT + %d"):format(mainMod, i)
-	hl.bind(focusKey, hl.dsp.focus({ workspace = i }), { description = "Workspace " .. i })
-	hl.bind(moveKey, hl.dsp.window.move({ workspace = i }), { description = "Move to workspace " .. i })
+-- Clavier AZERTY (fr) : sans SHIFT la rangee du haut emet &, e-aigu, ", ... et non
+-- des chiffres. On bind donc le keysym reellement produit pour le focus, et le
+-- chiffre (obtenu avec SHIFT) pour le deplacement de fenetre.
+local WORKSPACE_KEYS = {
+	[1]  = "ampersand",
+	[2]  = "eacute",
+	[3]  = "quotedbl",
+	[4]  = "apostrophe",
+	[5]  = "parenleft",
+	[6]  = "minus",
+	[7]  = "egrave",
+	[8]  = "underscore",
+	[9]  = "ccedilla",
+	[10] = "agrave",
+}
+
+for i = 1, 10 do
+	local digit = i % 10 -- le workspace 10 est sur la touche 0
+	hl.bind(("%s + %s"):format(mainMod, WORKSPACE_KEYS[i]), hl.dsp.focus({ workspace = i }),
+		{ description = "Workspace " .. i })
+	hl.bind(("%s + SHIFT + %d"):format(mainMod, digit), hl.dsp.window.move({ workspace = i }),
+		{ description = "Move to workspace " .. i })
 end
-hl.bind(("%s + 0"):format(mainMod), hl.dsp.focus({ workspace = 10 }), { description = "Workspace 10" })
-hl.bind(("%s + SHIFT + 0"):format(mainMod), hl.dsp.window.move({ workspace = 10 }), { description = "Move to workspace 10" })
 
 -- 6. Workspace Navigation
 hl.bind(KEY.WORKSPACE_NEXT, hl.dsp.focus({ workspace = "r+1" }), { description = "Next workspace" })
