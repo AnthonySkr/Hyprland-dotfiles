@@ -1,21 +1,44 @@
--- hyprland.lua
--- Point d'entree. Ordre de chargement uniquement, aucune config ici.
---
--- L'ordre compte :
---   1. env en premier, les variables doivent etre posees avant
---      l'initialisation du serveur d'affichage ;
---   2. puis du plus structurel au plus cosmetique ;
---   3. autostart en dernier, une fois que tout est en place.
---
--- vars.lua et theme.lua ne sont pas listes ici : ils ne font rien par
--- eux-memes, ils sont charges a la demande par les modules qui en ont
--- besoin, via require().
+local config_dir = (os.getenv("HOME") or "") .. "/.config/hypr"
+package.path = table.concat({
+    config_dir .. "/?.lua",
+    config_dir .. "/?/init.lua",
+    package.path,
+}, ";")
 
-require("env")
+-- Clear cached modules so they re-execute on reload (ensures binds/rules re-register)
+for _, mod in ipairs({"monitors", "inputs", "keybind", "windowrules", "animations", "themes.theme"}) do
+    package.loaded[mod] = nil
+end
+
 require("monitors")
-require("input")
-require("look")
+require("startup")
+require("inputs")
+require("keybind")
+require("windowrules")
 require("animations")
-require("rules")
-require("binds")
-require("autostart")
+require("themes.theme")
+
+hl.config({
+    dwindle = {
+        preserve_split = true,
+    },
+    master = {
+        new_status = "master",
+    },
+    misc = {
+        vrr = 0,
+        disable_hyprland_logo = true,
+        disable_splash_rendering = true,
+        force_default_wallpaper = 0,
+        anr_missed_pings = 5,
+        allow_session_lock_restore = true,
+    },
+    xwayland = {
+        force_zero_scaling = true,
+    },
+    general = {
+        snap = {
+            enabled = true,
+        },
+    },
+})
