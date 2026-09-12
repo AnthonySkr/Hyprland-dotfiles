@@ -1,3 +1,4 @@
+local scrPath = (os.getenv("HOME") or "") .. "/.config/hypr/scripts"
 local mainMod = "SUPER"
 local TERMINAL = "kitty"
 local EDITOR = "code"
@@ -13,8 +14,6 @@ local KEY = {
 	LOCK = ("%s + L"):format(mainMod),
 	SETTINGS = ("%s + T"):format(mainMod),
 	CHEATSHEET_TOGGLE = ("%s + H"):format(mainMod),
-	CHEATSHEET_REFRESH = ("%s + SHIFT + H"):format(mainMod),
-	HYPR_KEYS_PANEL = ("%s + K"):format(mainMod),
 	MUSIC = ("%s + M"):format(mainMod),
 	VIDEO = ("%s + V"):format(mainMod),
 
@@ -66,6 +65,7 @@ hl.bind(KEY.BROWSER, hl.dsp.exec_cmd(BROWSER), { description = "Browser" })
 hl.bind(KEY.LAUNCHER, hl.dsp.exec_cmd("noctalia msg panel-toggle launcher"), { description = "Toggle launcher" })
 hl.bind(KEY.LOCK, hl.dsp.exec_cmd( "noctalia msg session lock "), { description =  "Lock screen " })
 hl.bind(KEY.SETTINGS, hl.dsp.exec_cmd("noctalia msg settings-toggle"), { description = "Toggle settings" })
+hl.bind(KEY.CHEATSHEET_TOGGLE, hl.dsp.exec_cmd(scrPath .. "/cheatsheet.sh"), { description = "Toggle keybind cheatsheet" })
 hl.bind(KEY.MUSIC, hl.dsp.exec_cmd("quodlibet"), { description = "Music player" })
 hl.bind(KEY.VIDEO, hl.dsp.exec_cmd("mpv --player-operation-mode=pseudo-gui --force-window=immediate"), { description = "Video player" })
 
@@ -85,15 +85,19 @@ hl.bind(KEY.FOCUS_DOWN, hl.dsp.focus({ direction = "down" }), { description = "F
 
 hl.bind("ALT + tab", hl.dsp.window.cycle_next(), { description = "Cycle windows" })
 
-hl.bind(KEY.RESIZE_RIGHT, function() hl.exec_cmd("hyprctl dispatch resizeactive 30 0") end, { description = "Resize window right" })
-hl.bind(KEY.RESIZE_LEFT, function() hl.exec_cmd("hyprctl dispatch resizeactive -30 0") end, { description = "Resize window left" })
-hl.bind(KEY.RESIZE_UP, function() hl.exec_cmd("hyprctl dispatch resizeactive 0 -30") end, { description = "Resize window up" })
-hl.bind(KEY.RESIZE_DOWN, function() hl.exec_cmd("hyprctl dispatch resizeactive 0 30") end, { description = "Resize window down" })
+local RESIZE_STEP = 30
 
-hl.bind(KEY.MOVE_SWAP_LEFT, function() hl.exec_cmd("bash -c 'grep -q true <<< $(hyprctl activewindow -j | jq -r .floating) && hyprctl dispatch moveactive -30 0 || hyprctl dispatch movewindow l'") end, { description = "Move or swap window left" })
-hl.bind(KEY.MOVE_SWAP_RIGHT, function() hl.exec_cmd("bash -c 'grep -q true <<< $(hyprctl activewindow -j | jq -r .floating) && hyprctl dispatch moveactive 30 0 || hyprctl dispatch movewindow r'") end, { description = "Move or swap window right" })
-hl.bind(KEY.MOVE_SWAP_UP, function() hl.exec_cmd("bash -c 'grep -q true <<< $(hyprctl activewindow -j | jq -r .floating) && hyprctl dispatch moveactive 0 -30 || hyprctl dispatch movewindow u'") end, { description = "Move or swap window up" })
-hl.bind(KEY.MOVE_SWAP_DOWN, function() hl.exec_cmd("bash -c 'grep -q true <<< $(hyprctl activewindow -j | jq -r .floating) && hyprctl dispatch moveactive 0 30 || hyprctl dispatch movewindow d'") end, { description = "Move or swap window down" })
+hl.bind(KEY.RESIZE_RIGHT, hl.dsp.window.resize({ x =  RESIZE_STEP, y = 0, relative = true }), { description = "Resize window right" })
+hl.bind(KEY.RESIZE_LEFT,  hl.dsp.window.resize({ x = -RESIZE_STEP, y = 0, relative = true }), { description = "Resize window left" })
+hl.bind(KEY.RESIZE_UP,    hl.dsp.window.resize({ x = 0, y = -RESIZE_STEP, relative = true }), { description = "Resize window up" })
+hl.bind(KEY.RESIZE_DOWN,  hl.dsp.window.resize({ x = 0, y =  RESIZE_STEP, relative = true }), { description = "Resize window down" })
+
+-- Le dispatcher natif distingue seul les deux cas : il deplace une fenetre
+-- flottante et echange une fenetre tuilee avec sa voisine.
+hl.bind(KEY.MOVE_SWAP_LEFT,  hl.dsp.window.move({ direction = "left" }),  { description = "Move or swap window left" })
+hl.bind(KEY.MOVE_SWAP_RIGHT, hl.dsp.window.move({ direction = "right" }), { description = "Move or swap window right" })
+hl.bind(KEY.MOVE_SWAP_UP,    hl.dsp.window.move({ direction = "up" }),    { description = "Move or swap window up" })
+hl.bind(KEY.MOVE_SWAP_DOWN,  hl.dsp.window.move({ direction = "down" }),  { description = "Move or swap window down" })
 
 -- 4. Screenshots
 hl.bind(KEY.SHOT_WINDOW, hl.dsp.exec_cmd("HYPRSHOT_DIR=~/Pictures/Screenshots hyprshot -m window"), { description = "Screenshot window" })

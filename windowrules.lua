@@ -1,4 +1,5 @@
 -- Float rules
+hl.window_rule({ match = { class = "^hypr-cheatsheet$" },                                  float = true, size = "900 800", center = true })
 hl.window_rule({ match = { class = "^de\\.haeckerfelix\\.Shortwave$" },                   float = true })
 hl.window_rule({ match = { class = "^Signal$" },                                          float = true })
 hl.window_rule({ match = { class = "^com\\.github\\.rafostar\\.Clapper$" },               float = true })
