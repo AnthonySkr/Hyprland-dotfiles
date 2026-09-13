@@ -115,6 +115,20 @@ hl.bind(KEY_WORKSPACE.SCROLL_WORKSPACE_PREV, hl.dsp.focus({ workspace = "r-1" })
 hl.bind(KEY_WORKSPACE.WORKSPACE_EMPTY, hl.dsp.focus({ workspace = "empty" }), { description = "Empty workspace" })
 hl.bind(KEY_WORKSPACE.MOVE_TO_NEXT_WORKSPACE, hl.dsp.window.move({ workspace = "r+1" }), { description = "Move to next workspace" })
 hl.bind(KEY_WORKSPACE.MOVE_TO_PREV_WORKSPACE, hl.dsp.window.move({ workspace = "r-1" }), { description = "Move to previous workspace" })
+-- Keysyms de la rangee du haut en AZERTY, bureaux 1 a 10.
+local ws_keys = {
+    "ampersand", "eacute", "quotedbl", "apostrophe", "parenleft",
+    "minus", "egrave", "underscore", "ccedilla", "agrave",
+}
+
+for i, key in ipairs(ws_keys) do
+    hl.bind(mainMod .. " + " .. key,
+         hl.dsp.focus({ workspace = i }),
+         "Bureau " .. i)
+    hl.bind(mainMod .. " + SHIFT + " .. key,
+         hl.dsp.window.move({ workspace = i }),
+         "Envoyer au bureau " .. i)
+end
 
 -- Fn keys
 hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd(ipc .. "volume-up"), { locked = true })
