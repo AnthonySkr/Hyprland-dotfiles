@@ -7,6 +7,11 @@ local EDITOR = "code"
 local EXPLORER = "dolphin"
 local BROWSER = "firefox"
 
+local function bind(keys, dsp, desc, flags)
+	flags = flags or {}
+	flags.description = desc
+	hl.bind(keys, dsp, flags)
+
 -- Application
 local KEY_APPLICATION = {
 	TERMINAL = ("%s + RETURN"):format(mainMod),
